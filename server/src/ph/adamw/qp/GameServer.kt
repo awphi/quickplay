@@ -1,27 +1,37 @@
 package ph.adamw.qp
 
-import kotlinx.coroutines.Dispatchers
 import mu.KotlinLogging
+import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.net.packet.PacketType
 import java.net.ServerSocket
 import java.net.Socket
 import java.util.*
 
-class GameServer(isHost: Boolean) : GameManager(isHost) {
+class GameServer {
     private val map: TreeMap<Long, ServerEndpoint> = TreeMap<Long, ServerEndpoint>()
     private val logger = KotlinLogging.logger {}
+    val manager = GameManager(true)
 
     fun listenForConnections(port : Int) {
         val socket = ServerSocket(port)
         Thread({
             while (!socket.isClosed) {
-                if (game.maxPlayers > getConnected()) {
+                if (manager.getGame().maxPlayers > getConnected()) {
                     val conn = socket.accept()
                     add(conn)
                 }
             }
         }, "ConnAccept").start()
         logger.info("Server listening on port: $port")
+    }
+
+    fun run() {
+        Thread({
+            while(true) {
+                manager.tick(GameConstants.TICK_STEP)
+                Thread.sleep(GameConstants.TICK_STEP_MILLIS)
+            }
+        }, "Game").start()
     }
 
     fun get(id: Long) : ServerEndpoint? {
@@ -33,7 +43,7 @@ class GameServer(isHost: Boolean) : GameManager(isHost) {
     }
 
     private fun getFreshPid(): Long {
-        if (map.keys.size >= game.maxPlayers) {
+        if (map.keys.size >= manager.getGame().maxPlayers) {
             return -1
         }
         var id: Long
@@ -68,7 +78,7 @@ class GameServer(isHost: Boolean) : GameManager(isHost) {
         val c = ServerEndpoint(clientId, this, conn)
         map[clientId] = c
         c.restartKillJob()
-        c.send(PacketType.CONN_ACCEPT, game)
+        c.send(PacketType.CONN_ACCEPT, manager.getGame())
         return c
     }
 

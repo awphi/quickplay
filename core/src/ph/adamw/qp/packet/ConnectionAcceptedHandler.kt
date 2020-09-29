@@ -12,6 +12,7 @@ import ph.adamw.qp.util.JsonUtils
 @PacketLink(PacketType.CONN_ACCEPT)
 class ConnectionAcceptedHandler : PacketHandler() {
     override fun handle(data: JsonElement, from: Endpoint) {
-        QuickplayApplication.localManager.game = JsonUtils.fromJson(data, AbstractGame::class.java)
+        QuickplayApplication.localManager.init(JsonUtils.fromJson(data, AbstractGame::class.java))
+        QuickplayApplication.localManager.getGame().onConnect(QuickplayApplication.LOCAL_PID)
     }
 }

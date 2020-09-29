@@ -1,6 +1,5 @@
 package ph.adamw.qp
 
-import com.badlogic.gdx.Gdx
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -12,7 +11,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.net.Socket
 
-class ServerEndpoint(val id: Long, val server: GameServer, val socket: Socket) : Endpoint(server) {
+class ServerEndpoint(val id: Long, val server: GameServer, val socket: Socket) : Endpoint(server.manager) {
     private val logger = KotlinLogging.logger {}
 
     override val outputStream: OutputStream = socket.getOutputStream()

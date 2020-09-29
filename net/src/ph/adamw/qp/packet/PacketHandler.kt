@@ -1,6 +1,5 @@
 package ph.adamw.qp.packet
 
-import com.badlogic.gdx.utils.JsonValue
 import com.google.gson.JsonElement
 import ph.adamw.qp.Endpoint
 import ph.adamw.qp.GameManager

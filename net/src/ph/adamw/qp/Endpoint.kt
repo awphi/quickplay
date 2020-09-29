@@ -1,7 +1,5 @@
 package ph.adamw.qp
 
-import com.badlogic.gdx.utils.JsonValue
-import com.badlogic.gdx.utils.SerializationException
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
@@ -9,7 +7,6 @@ import mu.KotlinLogging
 import ph.adamw.qp.net.packet.PacketType
 import ph.adamw.qp.util.JsonUtils
 import java.io.*
-import kotlin.math.log
 
 abstract class Endpoint(private val manager: GameManager) {
     private val logger = KotlinLogging.logger {}

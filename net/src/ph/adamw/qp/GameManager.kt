@@ -1,13 +1,15 @@
 package ph.adamw.qp
 
-import com.badlogic.gdx.Gdx
+import com.badlogic.ashley.core.Engine
 import mu.KotlinLogging
 import ph.adamw.qp.game.AbstractGame
+import ph.adamw.qp.game.system.Box2DSystem
 import ph.adamw.qp.packet.PacketRegistry
 
-open class GameManager(val isHost: Boolean) {
+class GameManager(val isHost: Boolean) {
     private val logger = KotlinLogging.logger {}
-    lateinit var game: AbstractGame
+    private lateinit var game: AbstractGame
+    val engine = Engine()
 
     val packetRegistry : PacketRegistry by lazy {
         PacketRegistry(this)
@@ -16,5 +18,20 @@ open class GameManager(val isHost: Boolean) {
     init {
         logger.info("Started new game manager!")
         packetRegistry.build()
+    }
+
+    fun getGame() : AbstractGame {
+        return this.game
+    }
+
+    fun init(game: AbstractGame) {
+        engine.removeSystem(engine.getSystem(Box2DSystem::class.java))
+        this.game = game
+        this.game.init(this)
+        engine.addSystem(Box2DSystem(game.world))
+    }
+
+    fun tick(delta: Float) {
+        engine.update(delta)
     }
 }

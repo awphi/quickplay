@@ -139,5 +139,6 @@ project(":server") {
     dependencies {
         implementation project(":net")
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
     }
 }
