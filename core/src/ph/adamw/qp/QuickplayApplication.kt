@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.game.PongGame
 import ph.adamw.qp.game.system.DrawSystem
+import ph.adamw.qp.game.system.InputSystem
 
 
 class QuickplayApplication : ApplicationAdapter() {
@@ -26,15 +27,15 @@ class QuickplayApplication : ApplicationAdapter() {
         debugRenderer = Box2DDebugRenderer()
 
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0f)
-        println(camera.position)
         camera.update()
 
         localManager.engine.addSystem(DrawSystem(batch))
+        localManager.engine.addSystem(InputSystem())
 
         //DEBUG
         //ClientEndpoint.attemptConnect("0.0.0.0", 3336)
-        localManager.init(PongGame())
-        localManager.getGame().onConnect(LOCAL_PID)
+        //localManager.init(PongGame())
+        //localManager.getGame().onConnect(LOCAL_PID)
     }
 
     override fun render() {

@@ -26,9 +26,11 @@ class GameManager(val isHost: Boolean) {
 
     fun init(game: AbstractGame) {
         engine.removeSystem(engine.getSystem(Box2DSystem::class.java))
-        this.game = game
-        this.game.init(this)
         engine.addSystem(Box2DSystem(game.world))
+
+        this.game = game
+        this.game.manager = this
+        this.game.init()
     }
 
     fun tick(delta: Float) {
