@@ -5,11 +5,9 @@ import com.badlogic.gdx.physics.box2d.World
 import ph.adamw.qp.GameManager
 import ph.adamw.qp.util.InitOnceProperty
 
+// Not serializable
 abstract class AbstractGame {
-    @Transient
     val world = World(Vector2(0f, -10f), true)
-
-    @Transient
     lateinit var manager: GameManager
 
     abstract val name : String

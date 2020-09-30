@@ -3,6 +3,8 @@ package ph.adamw.qp
 import com.badlogic.ashley.core.Engine
 import mu.KotlinLogging
 import ph.adamw.qp.game.AbstractGame
+import ph.adamw.qp.game.entity.EntityBodyProvider
+import ph.adamw.qp.game.entity.EntityIDProvider
 import ph.adamw.qp.game.system.Box2DSystem
 import ph.adamw.qp.packet.PacketRegistry
 
@@ -18,10 +20,16 @@ class GameManager(val isHost: Boolean) {
     init {
         logger.info("Started new game manager!")
         packetRegistry.build()
+        engine.addEntityListener(EntityIDProvider())
+        engine.addEntityListener(EntityBodyProvider())
     }
 
     fun getGame() : AbstractGame {
         return this.game
+    }
+
+    fun isGameReady() : Boolean {
+        return ::game.isInitialized
     }
 
     fun init(game: AbstractGame) {

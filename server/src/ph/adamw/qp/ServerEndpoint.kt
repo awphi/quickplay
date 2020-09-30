@@ -5,7 +5,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
-import ph.adamw.qp.util.GameConstants
+import ph.adamw.qp.game.GameConstants
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream

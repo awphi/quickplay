@@ -8,8 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import ph.adamw.qp.game.EntityDrawableProvider
 import ph.adamw.qp.game.GameConstants
-import ph.adamw.qp.game.PongGame
+import ph.adamw.qp.game.games.PongGame
 import ph.adamw.qp.game.system.DrawSystem
 import ph.adamw.qp.game.system.InputSystem
 
@@ -29,13 +30,14 @@ class QuickplayApplication : ApplicationAdapter() {
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0f)
         camera.update()
 
+        localManager.engine.addEntityListener(EntityDrawableProvider())
         localManager.engine.addSystem(DrawSystem(batch))
         localManager.engine.addSystem(InputSystem())
 
         //DEBUG
         //ClientEndpoint.attemptConnect("0.0.0.0", 3336)
-        //localManager.init(PongGame())
-        //localManager.getGame().onConnect(LOCAL_PID)
+
+        //JsonUtils.toJson(PongGame())
     }
 
     override fun render() {
@@ -43,7 +45,9 @@ class QuickplayApplication : ApplicationAdapter() {
         camera.update()
         batch.projectionMatrix = camera.combined
         localManager.tick(Gdx.graphics.deltaTime)
-        debugRenderer.render(localManager.getGame().world, camera.combined.scl(GameConstants.PPM))
+        if(localManager.isGameReady()) {
+            debugRenderer.render(localManager.getGame().world, camera.combined.scl(GameConstants.PPM))
+        }
     }
 
     override fun dispose() {
@@ -56,7 +60,6 @@ class QuickplayApplication : ApplicationAdapter() {
     }
 
     companion object {
-        const val LOCAL_PID = 1L
         val localManager = GameManager(false)
     }
 }

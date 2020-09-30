@@ -6,4 +6,7 @@ object GameConstants {
     const val TICK_STEP = 0.02f
     const val TICK_STEP_MILLIS : Long = (TICK_STEP * 1000L).toLong()
     const val PPM = 24f
+    const val HEARTBEAT_PULSE = 5
+    const val TIMEOUT_TIME = 10
+    const val LOCAL_PID = 1L
 }

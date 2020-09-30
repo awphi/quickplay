@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
 import ph.adamw.qp.game.AbstractGame
-import ph.adamw.qp.game.PongGame
+import ph.adamw.qp.game.games.PongGame
 
 
 object JsonUtils {
@@ -15,9 +15,10 @@ object JsonUtils {
         val gameRta = RuntimeTypeAdapterFactory.of(AbstractGame::class.java)
                 .registerSubtype(PongGame::class.java)
 
-        gson = GsonBuilder().registerTypeAdapterFactory(gameRta).create()
+        gson = GsonBuilder()
+                .registerTypeAdapterFactory(gameRta)
+                .create()
     }
-
     fun parseJson(y: String): JsonElement {
         return JsonParser.parseString(y)
     }
