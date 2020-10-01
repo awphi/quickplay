@@ -3,7 +3,6 @@ package ph.adamw.qp.game
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.physics.box2d.*
 import ph.adamw.qp.game.component.*
-import ph.adamw.qp.game.input.PongPaddleInputController
 
 
 class PongGame : AbstractGame() {
@@ -14,11 +13,12 @@ class PongGame : AbstractGame() {
     override val maxPlayers: Int
         get() = 2
 
-    private val controlledMapper = Mappers.get(ControlComponent::class.java)
+    @Transient
+    private val controlMapper = Mappers.get(PlayerComponent::class.java)
 
-    private val leftPaddle = paddle(world, true)
-    private val rightPaddle = paddle(world, false)
-    private val ball = ball(world)
+    private val leftPaddle = createPaddle(true)
+    private val rightPaddle = createPaddle(false)
+    private val ball = createBall()
 
     override fun init() {
         manager.engine.addEntity(leftPaddle)
@@ -27,9 +27,9 @@ class PongGame : AbstractGame() {
     }
 
     private fun getPaddle(pid: Long) : Entity? {
-        if(controlledMapper.get(leftPaddle).owner == pid) {
+        if(controlMapper.get(leftPaddle).owner == pid) {
             return leftPaddle
-        } else if(controlledMapper.get(rightPaddle).owner == pid) {
+        } else if(controlMapper.get(rightPaddle).owner == pid) {
             return rightPaddle
         }
 
@@ -39,17 +39,17 @@ class PongGame : AbstractGame() {
     override fun onConnect(pid: Long) {
         super.onConnect(pid)
 
-        val p = getPaddle(ControlComponent.NULL_PID) ?: return
-        controlledMapper.get(p).owner = pid
+        val p = getPaddle(PlayerComponent.NULL_PID) ?: return
+        controlMapper.get(p).owner = pid
     }
 
     override fun onDisconnect(pid: Long) {
         super.onDisconnect(pid)
-        controlledMapper.get(getPaddle(pid)).owner = ControlComponent.NULL_PID
+        controlMapper.get(getPaddle(pid)).owner = PlayerComponent.NULL_PID
     }
 
     companion object {
-        fun ball(world: World) : Entity {
+        fun createBall() : Entity {
             val e = Entity()
             e.add(NameComponent("pong", "ball"))
             val bodyDef = BodyDef()
@@ -63,15 +63,15 @@ class PongGame : AbstractGame() {
             fixture.friction = 0f
             fixture.density = 0.15f
             fixture.restitution = 1f
-            e.add(PhysicsComponent(bodyDef, world).createFixture(fixture))
+            e.add(PhysicsComponent(bodyDef).createFixture(fixture))
             return e
         }
 
         // TODO add slight curve to edge of paddle hit box
-        fun paddle(world: World, left: Boolean) : Entity {
+        fun createPaddle(left: Boolean) : Entity {
             val e = Entity()
             e.add(NameComponent("pong", "paddle"))
-            e.add(ControlComponent(PongPaddleInputController))
+            e.add(PlayerComponent())
             val bodyDef = BodyDef()
             bodyDef.type = BodyDef.BodyType.KinematicBody
 
@@ -87,7 +87,7 @@ class PongGame : AbstractGame() {
             val rect = PolygonShape()
             rect.setAsBox(1f, 4f)
             fixture.shape = rect
-            e.add(PhysicsComponent(bodyDef, world).createFixture(fixture))
+            e.add(PhysicsComponent(bodyDef).createFixture(fixture))
             return e
         }
     }

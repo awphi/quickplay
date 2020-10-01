@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.World
 import ph.adamw.qp.GameManager
 
 abstract class AbstractGame {
-    val world = World(Vector2(0f, -10f), true)
+    @Transient
     lateinit var manager: GameManager
 
     abstract val name : String
@@ -14,6 +14,10 @@ abstract class AbstractGame {
 
     abstract fun init()
 
+    /**
+     * Called before the GAME_UPDATE packet is sent to the client.
+     */
     open fun onConnect(pid: Long) {}
+
     open fun onDisconnect(pid: Long) {}
 }

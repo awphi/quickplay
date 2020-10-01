@@ -46,6 +46,9 @@ class ServerEndpoint(val id: Long, val server: GameServer, val socket: Socket) :
     fun disconnect() {
         server.remove(id)
         isDead = true
+        killJob?.cancel()
+        logger.info("Disconnecting: $id")
+
         try {
             socket.close()
         } catch (e: IOException) {

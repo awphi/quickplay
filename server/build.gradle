@@ -5,5 +5,6 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 project.ext.mainClassName = "ph.adamw.qp.ServerApplication"
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.resources.srcDirs = ["resources/"]
 
 eclipse.project.name = appName + "-server"

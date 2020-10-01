@@ -2,7 +2,7 @@ package ph.adamw.qp
 
 import mu.KotlinLogging
 import ph.adamw.qp.game.GameConstants
-import ph.adamw.qp.net.packet.PacketType
+import ph.adamw.qp.packet.PacketType
 import java.net.ServerSocket
 import java.net.Socket
 import java.util.*
@@ -78,7 +78,9 @@ class GameServer {
         val c = ServerEndpoint(clientId, this, conn)
         map[clientId] = c
         c.restartKillJob()
-        c.send(PacketType.CONN_ACCEPT, manager.getGame())
+        c.send(PacketType.PID_ASSIGN, clientId)
+        manager.getGame().onConnect(clientId)
+        c.send(PacketType.GAME_UPDATE, manager.getGame())
         return c
     }
 

@@ -2,7 +2,6 @@ package ph.adamw.qp.packet
 
 import org.reflections.Reflections
 import ph.adamw.qp.GameManager
-import ph.adamw.qp.net.packet.PacketType
 import java.lang.RuntimeException
 
 class PacketRegistry(private val manager: GameManager) {
@@ -10,6 +9,7 @@ class PacketRegistry(private val manager: GameManager) {
 
     fun build() {
         val reflections = Reflections("ph.adamw.qp")
+        reflections
         val handlers = reflections.getTypesAnnotatedWith(PacketLink::class.java)
         for(i in handlers) {
             if(i.isAssignableFrom(PacketHandler::class.java)) {

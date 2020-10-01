@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import ph.adamw.qp.game.listener.EntityDrawableProvider
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.game.system.DrawSystem
-import ph.adamw.qp.game.system.InputSystem
 
 
 class QuickplayApplication : ApplicationAdapter() {
@@ -31,12 +30,9 @@ class QuickplayApplication : ApplicationAdapter() {
 
         localManager.engine.addEntityListener(EntityDrawableProvider())
         localManager.engine.addSystem(DrawSystem(batch))
-        localManager.engine.addSystem(InputSystem())
 
         //DEBUG
-        //ClientEndpoint.attemptConnect("0.0.0.0", 3336)
-
-        //JsonUtils.toJson(PongGame())
+        ClientEndpoint.attemptConnect("0.0.0.0", 3336)
     }
 
     override fun render() {
@@ -44,14 +40,16 @@ class QuickplayApplication : ApplicationAdapter() {
         camera.update()
         batch.projectionMatrix = camera.combined
         localManager.tick(Gdx.graphics.deltaTime)
+
         if(localManager.isGameReady()) {
-            debugRenderer.render(localManager.getGame().world, camera.combined.scl(GameConstants.PPM))
+            debugRenderer.render(localManager.world, camera.combined.scl(GameConstants.PPM))
         }
     }
 
     override fun dispose() {
         debugRenderer.dispose()
         batch.dispose()
+        ClientEndpoint.disconnectAndAlertServer()
     }
 
     override fun resize(width: Int, height: Int) {

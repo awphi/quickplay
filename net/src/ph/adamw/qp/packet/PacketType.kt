@@ -1,10 +1,10 @@
-package ph.adamw.qp.net.packet
+package ph.adamw.qp.packet
 
 enum class PacketType {
-    CONN_ACCEPT,
+    GAME_UPDATE,
     HEARTBEAT,
-    PLAYER_POSITION,
-    DISCONNECT;
+    PID_ASSIGN,
+    DISCONNECT_REQUEST;
 
     fun getId(): Int {
         return ordinal

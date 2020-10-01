@@ -4,7 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import mu.KotlinLogging
-import ph.adamw.qp.net.packet.PacketType
+import ph.adamw.qp.packet.PacketType
 import ph.adamw.qp.io.JsonUtils
 import java.io.*
 

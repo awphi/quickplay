@@ -6,7 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import ph.adamw.qp.game.GameConstants
-import ph.adamw.qp.net.packet.PacketType
+import ph.adamw.qp.packet.PacketType
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -14,6 +14,7 @@ import java.net.InetSocketAddress
 import java.net.Socket
 
 object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
+    var pid : Long = -1L
     private val logger = KotlinLogging.logger {}
     private var socket = Socket()
 
@@ -37,7 +38,7 @@ object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
     }
 
     fun disconnectAndAlertServer() {
-        send(PacketType.DISCONNECT)
+        send(PacketType.DISCONNECT_REQUEST)
         disconnect()
     }
 
