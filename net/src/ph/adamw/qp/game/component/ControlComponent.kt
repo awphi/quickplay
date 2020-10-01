@@ -4,7 +4,7 @@ import com.badlogic.ashley.core.Component
 import ph.adamw.qp.GameManager
 import ph.adamw.qp.game.input.EntityInputController
 
-class ControlledComponent(val inputController: EntityInputController) : Component {
+class ControlComponent(val inputController: EntityInputController) : Component {
     var owner : Long = NULL_PID
 
     var isLocked : Boolean = false

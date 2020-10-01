@@ -8,9 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import ph.adamw.qp.game.EntityDrawableProvider
+import ph.adamw.qp.game.listener.EntityDrawableProvider
 import ph.adamw.qp.game.GameConstants
-import ph.adamw.qp.game.games.PongGame
 import ph.adamw.qp.game.system.DrawSystem
 import ph.adamw.qp.game.system.InputSystem
 

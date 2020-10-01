@@ -1,4 +1,4 @@
-package ph.adamw.qp.util;
+package ph.adamw.qp.io;
 
 /*
  * Copyright (C) 2011 Google Inc.

@@ -3,8 +3,8 @@ package ph.adamw.qp
 import com.badlogic.ashley.core.Engine
 import mu.KotlinLogging
 import ph.adamw.qp.game.AbstractGame
-import ph.adamw.qp.game.entity.EntityBodyProvider
-import ph.adamw.qp.game.entity.EntityIDProvider
+import ph.adamw.qp.game.listener.EntityBodyProvider
+import ph.adamw.qp.game.listener.EntityIDProvider
 import ph.adamw.qp.game.system.Box2DSystem
 import ph.adamw.qp.packet.PacketRegistry
 

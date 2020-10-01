@@ -1,4 +1,4 @@
-package ph.adamw.qp.game.entity
+package ph.adamw.qp.game.listener
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener

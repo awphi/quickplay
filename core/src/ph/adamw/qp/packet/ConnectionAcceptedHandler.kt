@@ -6,7 +6,7 @@ import ph.adamw.qp.QuickplayApplication
 import ph.adamw.qp.game.AbstractGame
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.net.packet.PacketType
-import ph.adamw.qp.util.JsonUtils
+import ph.adamw.qp.io.JsonUtils
 
 
 @PacketLink(PacketType.CONN_ACCEPT)

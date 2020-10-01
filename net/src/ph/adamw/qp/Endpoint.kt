@@ -5,7 +5,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import mu.KotlinLogging
 import ph.adamw.qp.net.packet.PacketType
-import ph.adamw.qp.util.JsonUtils
+import ph.adamw.qp.io.JsonUtils
 import java.io.*
 
 abstract class Endpoint(private val manager: GameManager) {
@@ -36,7 +36,7 @@ abstract class Endpoint(private val manager: GameManager) {
         if (content is JsonElement) {
             parent.add("data", content)
         } else {
-            parent.add("data", JsonUtils.toJson(content))
+            parent.add("data", JsonUtils.toJsonTree(content))
         }
 
         logger.debug("Dispatching " + type + ": " + content.toString())

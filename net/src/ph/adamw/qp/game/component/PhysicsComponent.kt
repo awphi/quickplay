@@ -1,15 +1,14 @@
 package ph.adamw.qp.game.component
 
 import com.badlogic.ashley.core.Component
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.World
-import com.google.gson.JsonElement
-import ph.adamw.qp.util.JsonUtils
+import java.io.Serializable
 
-class PhysicsComponent(private val bodyDef: BodyDef, private val world: World) : Component {
+class PhysicsComponent(private val bodyDef: BodyDef, @Transient private val world: World) : Component, Serializable {
+    @Transient
     lateinit var body : Body
     private val fixtures = ArrayList<FixtureDef>()
 
@@ -17,8 +16,10 @@ class PhysicsComponent(private val bodyDef: BodyDef, private val world: World) :
         body = world.createBody(bodyDef)
         for(i in fixtures) {
             body.createFixture(i)
+            i.shape.dispose()
         }
         fixtures.clear()
+        body.fixtureList
     }
 
     fun removeBody() {
