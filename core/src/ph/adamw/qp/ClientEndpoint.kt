@@ -54,7 +54,9 @@ object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
     }
 
     private fun disconnect() {
-        heartbeat.cancel()
+        if(::heartbeat.isInitialized) {
+            heartbeat.cancel()
+        }
 
         try {
             socket.close()

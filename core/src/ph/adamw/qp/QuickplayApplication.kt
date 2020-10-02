@@ -8,9 +8,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import ph.adamw.qp.game.AbstractGame
 import ph.adamw.qp.game.listener.EntityDrawableProvider
 import ph.adamw.qp.game.GameConstants
+import ph.adamw.qp.game.PongGame
 import ph.adamw.qp.game.system.DrawSystem
+import ph.adamw.qp.io.JsonUtils
 
 
 class QuickplayApplication : ApplicationAdapter() {
@@ -32,7 +35,12 @@ class QuickplayApplication : ApplicationAdapter() {
         localManager.engine.addSystem(DrawSystem(batch))
 
         //DEBUG
-        ClientEndpoint.attemptConnect("0.0.0.0", 3336)
+        //ClientEndpoint.attemptConnect("0.0.0.0", 3336)
+        val game = PongGame()
+        val json = JsonUtils.toJsonTree(game)
+        println(json)
+        val rebuiltGame = JsonUtils.fromJson(json, AbstractGame::class.java)
+        localManager.init(rebuiltGame)
     }
 
     override fun render() {

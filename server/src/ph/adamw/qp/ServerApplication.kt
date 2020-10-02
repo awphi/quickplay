@@ -3,8 +3,8 @@ package ph.adamw.qp
 import ph.adamw.qp.game.PongGame
 
 object ServerApplication {
-    // TODO eventually move to hosting multiple game servers at once (on different ports of course)
-    val testServer = GameServer()
+    // Eventually: move to hosting multiple game servers at once (on different ports of course)
+    private val testServer = GameServer()
 
     @JvmStatic
     fun main(args: Array<String>) {
