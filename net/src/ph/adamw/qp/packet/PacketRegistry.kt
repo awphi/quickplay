@@ -9,7 +9,6 @@ class PacketRegistry(private val manager: GameManager) {
 
     fun build() {
         val reflections = Reflections("ph.adamw.qp")
-        reflections
         val handlers = reflections.getTypesAnnotatedWith(PacketLink::class.java)
         for(i in handlers) {
             if(i.isAssignableFrom(PacketHandler::class.java)) {

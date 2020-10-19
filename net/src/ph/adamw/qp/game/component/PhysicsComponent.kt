@@ -7,14 +7,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.World
 import java.io.Serializable
 
-// TODO work out why bodies are not being properly recreated on the client after being deserialized
-//      Problem is: FixtureDef's shapes do not store vertex information in them
-//      make a wrapper object around it (FixtureDefDelegate) etc. that stores a fixture def
-//      as well as it's shape/vert info with a method to produce a full FixtureDef
-//      then change shape exclusion strategy to exclude serializing shapes in FixtureDefs
-//      and change the shapeRta to use the new delegate classes
-
-// TODO write type adapter to use the velocity, location, rotation etc. of the active body
 class PhysicsComponent(private val bodyDef: BodyDef) : Component, Serializable {
     @Transient
     lateinit var world: World
@@ -22,12 +14,29 @@ class PhysicsComponent(private val bodyDef: BodyDef) : Component, Serializable {
     @Transient
     lateinit var body : Body
 
+    // Used for deserialization and serialization
+    lateinit var bodyData : BodyData
+
     private val fixtures = ArrayList<FixtureDef>()
 
     fun createBody() {
         body = world.createBody(bodyDef)
         for(i in fixtures) {
             body.createFixture(i)
+        }
+
+        // Load body data state into active body
+        if(::bodyData.isInitialized) {
+            body.setTransform(bodyData.position, bodyData.angle)
+            body.linearVelocity = bodyData.linearVelocity
+            body.angularVelocity = bodyData.angularVelocity
+            body.angularDamping = bodyData.angularDamping
+            body.massData = bodyData.massData
+            body.isBullet = bodyData.bullet
+            body.angularDamping = bodyData.angularDamping
+            body.isSleepingAllowed = bodyData.sleepingAllowed
+            body.isAwake = bodyData.awake
+            body.gravityScale = bodyData.gravityScale
         }
     }
 
@@ -42,5 +51,24 @@ class PhysicsComponent(private val bodyDef: BodyDef) : Component, Serializable {
     fun createFixture(fixture: FixtureDef) : PhysicsComponent {
         fixtures.add(fixture)
         return this
+    }
+
+    // Save body state into a body data object
+    fun createBodyData() {
+        if(!isReady()) {
+            return
+        }
+
+        bodyData = BodyData(body.position,
+            body.linearVelocity,
+            body.angularVelocity,
+            body.angle,
+            body.massData,
+            body.isBullet,
+            body.angularDamping,
+            body.isSleepingAllowed,
+            body.isAwake,
+            body.gravityScale
+        )
     }
 }

@@ -15,7 +15,7 @@ abstract class AbstractGame {
     abstract fun init()
 
     /**
-     * Called before the GAME_UPDATE packet is sent to the client.
+     * Called before the GAME_SET packet is sent to the client.
      */
     open fun onConnect(pid: Long) {}
 

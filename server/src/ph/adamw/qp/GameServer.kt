@@ -80,7 +80,7 @@ class GameServer {
         c.restartKillJob()
         c.send(PacketType.PID_ASSIGN, clientId)
         manager.getGame().onConnect(clientId)
-        c.send(PacketType.GAME_UPDATE, manager.getGame())
+        c.send(PacketType.GAME_SET, manager.getGame())
         return c
     }
 

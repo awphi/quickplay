@@ -1,7 +1,7 @@
 package ph.adamw.qp.packet
 
 enum class PacketType {
-    GAME_UPDATE,
+    GAME_SET,
     HEARTBEAT,
     PID_ASSIGN,
     DISCONNECT_REQUEST;

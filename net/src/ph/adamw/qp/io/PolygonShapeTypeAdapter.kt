@@ -10,6 +10,8 @@ class PolygonShapeTypeAdapter : TypeAdapter<PolygonShape>() {
     override fun write(w: JsonWriter, value: PolygonShape) {
         val vec2Adapter = JsonUtils.getAdapter(Vector2::class.java)
 
+        w.beginObject()
+        w.name("verts")
         w.beginArray()
         val vec = Vector2()
         for(i in 0 until value.vertexCount) {
@@ -17,17 +19,24 @@ class PolygonShapeTypeAdapter : TypeAdapter<PolygonShape>() {
             vec2Adapter.write(w, vec)
         }
         w.endArray()
+        w.endObject()
     }
 
     override fun read(r: JsonReader): PolygonShape {
         val vec2Adapter = JsonUtils.getAdapter(Vector2::class.java)
         val verts = ArrayList<Vector2>()
 
-        r.beginArray()
+        r.beginObject()
         while(r.hasNext()) {
-            verts.add(vec2Adapter.read(r))
+            if(r.nextName() == "verts") {
+                r.beginArray()
+                while (r.hasNext()) {
+                    verts.add(vec2Adapter.read(r))
+                }
+                r.endArray()
+            }
         }
-        r.endArray()
+        r.endObject()
 
         val shape = PolygonShape()
         shape.set(verts.toTypedArray())

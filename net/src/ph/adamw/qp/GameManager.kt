@@ -13,6 +13,8 @@ import ph.adamw.qp.packet.PacketRegistry
 class GameManager(val isHost: Boolean) {
     private val logger = KotlinLogging.logger {}
     private lateinit var game: AbstractGame
+    var time : Float = 0f
+        private set
 
     val engine = Engine()
     val world = World(Vector2(0f, -10f), true)
@@ -47,5 +49,6 @@ class GameManager(val isHost: Boolean) {
 
     fun tick(delta: Float) {
         engine.update(delta)
+        time += delta
     }
 }
