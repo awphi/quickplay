@@ -10,7 +10,7 @@ import ph.adamw.qp.game.input.InputSnapshot
 import ph.adamw.qp.packet.PacketType
 
 // TODO write serializer & deserializer for gdx's Input interface
-class InputSampleSystem(val inputSnapshot: InputSnapshot) : IntervalSystem(GameConstants.INPUT_SAMPLE_RATE, -1) {
+class InputSampleSystem(val inputSnapshot: InputSnapshot) : IntervalSystem(GameConstants.TICK_STEP, -1) {
     override fun updateInterval() {
         ClientEndpoint.send(PacketType.INPUT_SAMPLE, inputSnapshot)
         QuickplayApplication.localManager.setInput(ClientEndpoint.pid, inputSnapshot)

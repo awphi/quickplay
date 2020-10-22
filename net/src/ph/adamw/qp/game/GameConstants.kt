@@ -8,5 +8,4 @@ object GameConstants {
     const val PPM = 24f
     const val HEARTBEAT_PULSE = 5
     const val TIMEOUT_TIME = 10
-    const val INPUT_SAMPLE_RATE = 0.03f
 }
