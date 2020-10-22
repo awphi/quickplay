@@ -1,6 +1,6 @@
 package ph.adamw.qp
 
-import ph.adamw.qp.game.PongGame
+import ph.adamw.qp.pong.PongGame
 
 object ServerApplication {
     // Eventually: move to hosting multiple game servers at once (on different ports of course)

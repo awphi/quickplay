@@ -9,7 +9,6 @@ import com.google.gson.stream.JsonWriter
 import ph.adamw.qp.game.component.BodyData
 import ph.adamw.qp.game.component.PhysicsComponent
 
-// TODO verify this is working as intended
 class PhysicsComponentTypeAdapterFactory : TypeAdapterFactory {
     override fun <T> create(gson: Gson, type: TypeToken<T>?): TypeAdapter<T>? {
         if(type == null || !type.rawType.isAssignableFrom(PhysicsComponent::class.java)) {
@@ -30,5 +29,4 @@ class PhysicsComponentTypeAdapterFactory : TypeAdapterFactory {
             }
         }
     }
-
 }

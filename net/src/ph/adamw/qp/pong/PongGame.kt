@@ -1,7 +1,9 @@
-package ph.adamw.qp.game
+package ph.adamw.qp.pong
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.physics.box2d.*
+import ph.adamw.qp.game.AbstractGame
+import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.game.component.*
 
 
@@ -71,7 +73,7 @@ class PongGame : AbstractGame() {
         fun createPaddle(left: Boolean) : Entity {
             val e = Entity()
             e.add(NameComponent("pong", "paddle"))
-            e.add(PlayerComponent())
+            e.add(PlayerComponent(PongInputHandler))
             val bodyDef = BodyDef()
             bodyDef.type = BodyDef.BodyType.KinematicBody
 

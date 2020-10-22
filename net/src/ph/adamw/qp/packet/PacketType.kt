@@ -4,7 +4,8 @@ enum class PacketType {
     GAME_SET,
     HEARTBEAT,
     PID_ASSIGN,
-    DISCONNECT_REQUEST;
+    DISCONNECT_REQUEST,
+    INPUT_SAMPLE;
 
     fun getId(): Int {
         return ordinal

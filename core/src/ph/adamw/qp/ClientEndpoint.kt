@@ -14,7 +14,7 @@ import java.net.InetSocketAddress
 import java.net.Socket
 
 object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
-    var pid : Long = -1L
+    var pid : Long = -2L
     private val logger = KotlinLogging.logger {}
     private var socket = Socket()
 

@@ -4,8 +4,10 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.physics.box2d.*
 import com.google.gson.*
 import ph.adamw.qp.game.AbstractGame
-import ph.adamw.qp.game.PongGame
+import ph.adamw.qp.pong.PongGame
 import ph.adamw.qp.game.component.*
+import ph.adamw.qp.game.input.InputHandler
+import ph.adamw.qp.pong.PongInputHandler
 
 
 object JsonUtils {
@@ -14,8 +16,12 @@ object JsonUtils {
     init {
         val builder = GsonBuilder()
 
+        // TODO switch gameRta and inputHandlerRta to reflective/declarative registry
         val gameRta = RuntimeTypeAdapterFactory.of(AbstractGame::class.java)
                 .registerSubtype(PongGame::class.java)
+
+        val inputHandlerRta = RuntimeTypeAdapterFactory.of(InputHandler::class.java)
+                .registerSubtype(PongInputHandler::class.java)
 
         val shapeRta = RuntimeTypeAdapterFactory.of(Shape::class.java)
                 .registerSubtype(CircleShape::class.java)
@@ -27,6 +33,7 @@ object JsonUtils {
 
         builder.registerTypeAdapterFactory(gameRta)
         builder.registerTypeAdapterFactory(shapeRta)
+        builder.registerTypeAdapterFactory(inputHandlerRta)
         builder.registerTypeAdapterFactory(PhysicsComponentTypeAdapterFactory())
 
         ComponentRegistry.register(builder)

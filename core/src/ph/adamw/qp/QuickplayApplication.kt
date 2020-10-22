@@ -1,7 +1,9 @@
 package ph.adamw.qp
 
+import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -11,9 +13,12 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import ph.adamw.qp.game.AbstractGame
 import ph.adamw.qp.game.listener.EntityDrawableProvider
 import ph.adamw.qp.game.GameConstants
-import ph.adamw.qp.game.PongGame
+import ph.adamw.qp.game.input.InputHandler
+import ph.adamw.qp.game.input.InputSnapshot
 import ph.adamw.qp.game.system.DrawSystem
+import ph.adamw.qp.game.system.InputSampleSystem
 import ph.adamw.qp.io.JsonUtils
+import ph.adamw.qp.pong.PongGame
 
 
 class QuickplayApplication : ApplicationAdapter() {
@@ -23,24 +28,31 @@ class QuickplayApplication : ApplicationAdapter() {
     private lateinit var debugRenderer : Box2DDebugRenderer
 
     override fun create() {
+        val inputSnapshot = InputSnapshot()
+        Gdx.input.inputProcessor = inputSnapshot
+
         batch = SpriteBatch()
         camera = OrthographicCamera()
         viewport = FitViewport(GameConstants.WORLD_WIDTH, GameConstants.WORLD_HEIGHT, camera)
         debugRenderer = Box2DDebugRenderer()
 
+        localManager.engine.addEntityListener(EntityDrawableProvider())
+        localManager.engine.addSystem(DrawSystem(batch))
+        localManager.engine.addSystem(InputSampleSystem(inputSnapshot))
+
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0f)
         camera.update()
 
-        localManager.engine.addEntityListener(EntityDrawableProvider())
-        localManager.engine.addSystem(DrawSystem(batch))
-
         //DEBUG
-        //ClientEndpoint.attemptConnect("0.0.0.0", 3336)
+        ClientEndpoint.attemptConnect("0.0.0.0", 3336)
+
+        /*
         val game = PongGame()
         val json = JsonUtils.toJsonTree(game)
         println(json)
         val rebuiltGame = JsonUtils.fromJson(json, AbstractGame::class.java)
         localManager.init(rebuiltGame)
+         */
     }
 
     override fun render() {
@@ -65,6 +77,6 @@ class QuickplayApplication : ApplicationAdapter() {
     }
 
     companion object {
-        val localManager = GameManager(false)
+        val localManager = GameManager()
     }
 }

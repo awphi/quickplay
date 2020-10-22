@@ -39,7 +39,7 @@ abstract class Endpoint(private val manager: GameManager) {
             parent.add("data", JsonUtils.toJsonTree(content))
         }
 
-        logger.debug("Dispatching " + type + ": " + content.toString())
+        logger.debug("Dispatching $type: $parent")
 
         try {
             outputStream.write((parent.toString() + "\n").toByteArray())

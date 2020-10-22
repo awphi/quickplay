@@ -10,7 +10,7 @@ import java.util.*
 class GameServer {
     private val map: TreeMap<Long, ServerEndpoint> = TreeMap<Long, ServerEndpoint>()
     private val logger = KotlinLogging.logger {}
-    val manager = GameManager(true)
+    val manager = GameManager()
 
     fun listenForConnections(port : Int) {
         val socket = ServerSocket(port)

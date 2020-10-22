@@ -4,7 +4,7 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.ComponentMapper
 
 object Mappers {
-    val map = HashMap<Class<Component>, ComponentMapper<Component>>()
+    val map = HashMap<Class<out Component>, ComponentMapper<Component>>()
 
     fun <T : Component> get(clazz: Class<T>) : ComponentMapper<T> {
         if(!map.containsKey(clazz)) {
