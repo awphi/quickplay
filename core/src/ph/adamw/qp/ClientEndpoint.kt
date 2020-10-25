@@ -9,13 +9,15 @@ import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.packet.PacketType
 import java.lang.Exception
 import java.net.DatagramSocket
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
 
 object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
     var pid : Long = -2L
 
-    override var tcpSocket = Socket()
+    public override var tcpSocket = Socket()
+    override var udpSocket = DatagramSocket(null)
 
     private lateinit var heartbeat : Job
 
@@ -26,6 +28,8 @@ object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
 
         try {
             tcpSocket.connect(InetSocketAddress(hostname, port), GameConstants.TIMEOUT_TIME * 1000)
+            udpSocket.bind(tcpSocket.localSocketAddress)
+            udpSocket.connect(tcpSocket.remoteSocketAddress)
         } catch(e: Exception) {
             logger.trace(e.localizedMessage, e.cause)
             return false
@@ -35,6 +39,7 @@ object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
 
         startHeartBeat()
         startReceivingTcp()
+        startReceivingUdp()
         return true
     }
 
@@ -49,7 +54,10 @@ object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
         }
 
         tcpSocket.close()
+        udpSocket.close()
+
         tcpSocket = Socket()
+        udpSocket = DatagramSocket(null)
     }
 
     override fun isConnected(): Boolean {

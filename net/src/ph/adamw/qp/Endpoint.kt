@@ -11,16 +11,60 @@ import java.io.*
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.Socket
+import java.net.SocketException
 
 abstract class Endpoint(private val manager: GameManager) {
     protected val logger = KotlinLogging.logger {}
+
     protected abstract val tcpSocket : Socket
+    protected abstract val udpSocket : DatagramSocket
 
     protected abstract fun isConnected(): Boolean
 
+    protected fun startReceivingUdp() {
+        Thread({
+            val buf = ByteArray(65535)
+            while (isConnected()) {
+                val receive = DatagramPacket(buf, buf.size)
+                udpSocket.receive(receive)
+                val s = String(receive.data, 0, receive.length, Charsets.UTF_8)
+                for(i in s.split("\n")) {
+                    handlePacket(i)
+                }
+            }
+        }, "UDP-IN").start()
+    }
+
+    fun sendUdp(type: PacketType, content: Any?): Boolean {
+        if (!isConnected()) {
+            return false
+        }
+
+        val bytes = wrapPacket(type, content).toByteArray(Charsets.UTF_8)
+        logger.debug("Dispatching UDP: $type: $content")
+
+        val dp = DatagramPacket(bytes, 0, bytes.size)
+
+        try {
+            udpSocket.send(dp)
+        } catch(e: IOException) {
+            logger.trace(e.localizedMessage, e.cause)
+            return false
+        }
+
+        return true
+    }
+
     protected fun startReceivingTcp() {
         Thread({
-            receiveTcp()
+            val br = BufferedReader(InputStreamReader(tcpSocket.inputStream))
+            while (isConnected()) {
+                if (!br.ready()) {
+                    continue
+                }
+
+                handlePacket(br.readLine())
+            }
         }, "TCP-IN").start()
     }
 
@@ -33,7 +77,7 @@ abstract class Endpoint(private val manager: GameManager) {
             return false
         }
 
-        val pkt = packet(type, content)
+        val pkt = wrapPacket(type, content)
         logger.debug("Dispatching TCP: $type: $content")
 
         try {
@@ -46,7 +90,7 @@ abstract class Endpoint(private val manager: GameManager) {
         return true
     }
 
-    protected fun packet(type: PacketType, content: Any?) : String {
+    protected fun wrapPacket(type: PacketType, content: Any?) : String {
         val parent = JsonObject()
         parent.addProperty("packet_id", type.getId())
 
@@ -59,7 +103,7 @@ abstract class Endpoint(private val manager: GameManager) {
         return parent.toString() + "\n"
     }
 
-    protected fun receivePacket(content: String) {
+    private fun handlePacket(content: String) {
         if (content == "") {
             return
         }
@@ -93,16 +137,5 @@ abstract class Endpoint(private val manager: GameManager) {
         val data = obj.get("data")
         logger.debug("Handling: $pkt: $data")
         handler.handle(data, this)
-    }
-
-    private fun receiveTcp() {
-        val br = BufferedReader(InputStreamReader(tcpSocket.inputStream))
-        while (isConnected()) {
-            if (!br.ready()) {
-                continue
-            }
-
-            receivePacket(br.readLine())
-        }
     }
 }

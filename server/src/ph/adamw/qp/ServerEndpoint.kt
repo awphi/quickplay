@@ -13,9 +13,13 @@ class ServerEndpoint(val id: Long, private val server: GameServer, override val 
     private var isDead = false
     private var killJob : Job? = null
 
+    override val udpSocket = DatagramSocket(tcpSocket.localSocketAddress)
+
     init {
         tcpSocket.outputStream.flush()
+        udpSocket.connect(tcpSocket.remoteSocketAddress)
         startReceivingTcp()
+        startReceivingUdp()
     }
 
     fun restartKillJob() {
@@ -43,5 +47,6 @@ class ServerEndpoint(val id: Long, private val server: GameServer, override val 
         logger.info("Disconnecting: $id")
 
         tcpSocket.close()
+        udpSocket.close()
     }
 }

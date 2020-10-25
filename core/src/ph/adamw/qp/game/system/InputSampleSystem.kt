@@ -11,7 +11,7 @@ import ph.adamw.qp.packet.PacketType
 class InputSampleSystem(private val inputSnapshot: InputSnapshot) : IntervalSystem(GameConstants.TICK_STEP, -1) {
     override fun updateInterval() {
         // TODO migrate this to UDP
-        ClientEndpoint.sendTcp(PacketType.INPUT_SAMPLE, inputSnapshot)
+        ClientEndpoint.sendUdp(PacketType.INPUT_SAMPLE, inputSnapshot)
         QuickplayApplication.localManager.setInput(ClientEndpoint.pid, inputSnapshot)
     }
 }

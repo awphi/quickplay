@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.sun.security.ntlm.Client
+import mu.KotlinLogging
 import ph.adamw.qp.game.AbstractGame
 import ph.adamw.qp.game.listener.EntityDrawableProvider
 import ph.adamw.qp.game.GameConstants
@@ -26,6 +28,8 @@ class QuickplayApplication : ApplicationAdapter() {
     private lateinit var camera: OrthographicCamera
     private lateinit var viewport : Viewport
     private lateinit var debugRenderer : Box2DDebugRenderer
+
+    private val logger = KotlinLogging.logger {}
 
     override fun create() {
         val inputSnapshot = InputSnapshot()
@@ -45,6 +49,7 @@ class QuickplayApplication : ApplicationAdapter() {
 
         //DEBUG
         ClientEndpoint.connect("localhost", GameConstants.TCP_PORT)
+        logger.info("Assigned local port: ${ClientEndpoint.tcpSocket.localPort}")
 
         /*
         val game = PongGame()
