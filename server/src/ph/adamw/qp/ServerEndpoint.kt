@@ -6,24 +6,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import ph.adamw.qp.game.GameConstants
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.net.DatagramSocket
 import java.net.Socket
 
-class ServerEndpoint(val id: Long, val server: GameServer, val socket: Socket) : Endpoint(server.manager) {
-    private val logger = KotlinLogging.logger {}
-
-    override val outputStream: OutputStream = socket.getOutputStream()
-    override val inputStream: InputStream
-
+class ServerEndpoint(val id: Long, private val server: GameServer, override val tcpSocket: Socket) : Endpoint(server.manager) {
     private var isDead = false
     private var killJob : Job? = null
 
     init {
-        outputStream.flush()
-        inputStream = socket.getInputStream()
-        startReceiving()
+        tcpSocket.outputStream.flush()
+        startReceivingTcp()
     }
 
     fun restartKillJob() {
@@ -44,15 +36,12 @@ class ServerEndpoint(val id: Long, val server: GameServer, val socket: Socket) :
     }
 
     fun disconnect() {
+        server.manager.getGame().onDisconnect(id)
         server.remove(id)
         isDead = true
         killJob?.cancel()
         logger.info("Disconnecting: $id")
 
-        try {
-            socket.close()
-        } catch (e: IOException) {
-            logger.trace(e.localizedMessage, e.cause)
-        }
+        tcpSocket.close()
     }
 }

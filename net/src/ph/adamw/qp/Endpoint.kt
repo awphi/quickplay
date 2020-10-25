@@ -4,32 +4,49 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import mu.KotlinLogging
+import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.packet.PacketType
 import ph.adamw.qp.io.JsonUtils
 import java.io.*
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.Socket
 
 abstract class Endpoint(private val manager: GameManager) {
-    private val logger = KotlinLogging.logger {}
-
-    protected abstract val outputStream: OutputStream
-    protected abstract val inputStream: InputStream
+    protected val logger = KotlinLogging.logger {}
+    protected abstract val tcpSocket : Socket
 
     protected abstract fun isConnected(): Boolean
 
-    protected fun startReceiving() {
+    protected fun startReceivingTcp() {
         Thread({
-            receive()
-        }, "PktReceive").start()
+            receiveTcp()
+        }, "TCP-IN").start()
     }
 
-    fun send(type: PacketType): Boolean {
-        return send(type, null)
+    fun sendTcp(type: PacketType): Boolean {
+        return sendTcp(type, null)
     }
 
-    fun send(type: PacketType, content: Any?): Boolean {
+    fun sendTcp(type: PacketType, content: Any?): Boolean {
         if (!isConnected()) {
             return false
         }
+
+        val pkt = packet(type, content)
+        logger.debug("Dispatching TCP: $type: $content")
+
+        try {
+            tcpSocket.outputStream.write(pkt.toByteArray(Charsets.UTF_8))
+        } catch (e: IOException) {
+            logger.trace(e.localizedMessage, e.cause)
+            return false
+        }
+
+        return true
+    }
+
+    protected fun packet(type: PacketType, content: Any?) : String {
         val parent = JsonObject()
         parent.addProperty("packet_id", type.getId())
 
@@ -39,69 +56,53 @@ abstract class Endpoint(private val manager: GameManager) {
             parent.add("data", JsonUtils.toJsonTree(content))
         }
 
-        logger.debug("Dispatching $type: $parent")
-
-        try {
-            outputStream.write((parent.toString() + "\n").toByteArray())
-        } catch (e: IOException) {
-            logger.trace(e.localizedMessage, e.cause)
-            return false
-        }
-        return true
+        return parent.toString() + "\n"
     }
 
-    private fun receive() {
-        val br = BufferedReader(InputStreamReader(inputStream))
+    protected fun receivePacket(content: String) {
+        if (content == "") {
+            return
+        }
+
+        val json = try {
+            JsonUtils.parseJson(content)
+        } catch (e: JsonSyntaxException) {
+            logger.trace(e.localizedMessage, e.cause)
+            return
+        }
+
+        if (!json.isJsonObject) {
+            return
+        }
+        val obj: JsonObject = json.asJsonObject
+        val id: JsonElement = obj.get("packet_id")
+
+        if (!id.isJsonPrimitive) {
+            return
+        }
+
+        val idAsInt= try {
+            id.asInt
+        } catch (e: NumberFormatException) {
+            logger.trace(e.localizedMessage, e.cause)
+            return
+        }
+
+        val pkt = PacketType.getPacket(idAsInt) ?: return
+        val handler = manager.packetRegistry.getHandler(pkt) ?: return
+        val data = obj.get("data")
+        logger.debug("Handling: $pkt: $data")
+        handler.handle(data, this)
+    }
+
+    private fun receiveTcp() {
+        val br = BufferedReader(InputStreamReader(tcpSocket.inputStream))
         while (isConnected()) {
-            try {
-                if (!br.ready()) {
-                    continue
-                }
-                val content = br.readLine()
-
-                // String is split here as sometimes messages can stack up due to latency and this avoids us trying to parse multiple json
-                // objects as one.
-                val split = content.split("\n".toRegex()).toTypedArray()
-
-                for (i in split) {
-                    if (i == "") {
-                        continue
-                    }
-
-                    val json: JsonElement
-                    json = try {
-                        JsonUtils.parseJson(i)
-                    } catch (e: JsonSyntaxException) {
-                        logger.trace(e.localizedMessage, e.cause)
-                        continue
-                    }
-
-                    if (!json.isJsonObject) {
-                        continue
-                    }
-                    val obj: JsonObject = json.asJsonObject
-                    val id: JsonElement = obj.get("packet_id")
-
-                    if (!id.isJsonPrimitive) {
-                        continue
-                    }
-
-                    val idAsInt: Int
-                    idAsInt = try {
-                        id.asInt
-                    } catch (e: NumberFormatException) {
-                        logger.trace(e.localizedMessage, e.cause)
-                        continue
-                    }
-
-                    val pkt = PacketType.getPacket(idAsInt) ?: continue
-                    val handler = manager.packetRegistry.getHandler(pkt) ?: continue
-                    logger.debug("Handling $pkt: $content")
-                    handler.handle(obj.get("data"), this)
-                }
-            } catch (e: IOException) {
-                logger.trace(e.localizedMessage, e.cause)
+            if (!br.ready()) {
+                continue
             }
+
+            receivePacket(br.readLine())
         }
     }
 }

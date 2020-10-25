@@ -3,12 +3,14 @@ package ph.adamw.qp
 import mu.KotlinLogging
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.packet.PacketType
+import java.net.DatagramSocket
 import java.net.ServerSocket
 import java.net.Socket
 import java.util.*
+import kotlin.collections.HashSet
 
 class GameServer {
-    private val map: TreeMap<Long, ServerEndpoint> = TreeMap<Long, ServerEndpoint>()
+    private val map = TreeMap<Long, ServerEndpoint>()
     private val logger = KotlinLogging.logger {}
     val manager = GameManager()
 
@@ -38,11 +40,11 @@ class GameServer {
         return map[id]
     }
 
-    fun getConnected(): Int {
+    fun getConnected() : Int {
         return map.values.size
     }
 
-    private fun getFreshPid(): Long {
+    private fun getFreshPid() : Long {
         if (map.keys.size >= manager.getGame().maxPlayers) {
             return -1
         }
@@ -55,7 +57,7 @@ class GameServer {
 
     private fun broadcast(type: PacketType, content: Any?, to: Collection<ServerEndpoint>) {
         for (i : ServerEndpoint in to) {
-            i.send(type, content)
+            i.sendTcp(type, content)
         }
     }
 
@@ -75,13 +77,13 @@ class GameServer {
         }
 
         logger.info("Received connection from: ${conn.inetAddress}, assigned ID: $clientId")
-        val c = ServerEndpoint(clientId, this, conn)
-        map[clientId] = c
-        c.restartKillJob()
-        c.send(PacketType.PID_ASSIGN, clientId)
+        val client = ServerEndpoint(clientId, this, conn)
+        map[clientId] = client
+        client.restartKillJob()
+        client.sendTcp(PacketType.PID_ASSIGN, clientId)
         manager.getGame().onConnect(clientId)
-        c.send(PacketType.GAME_SET, manager.getGame())
-        return c
+        client.sendTcp(PacketType.GAME_SET, manager.getGame())
+        return client
     }
 
     fun remove(id: Long): Boolean {

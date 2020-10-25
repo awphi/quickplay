@@ -8,4 +8,7 @@ object GameConstants {
     const val PPM = 24f
     const val HEARTBEAT_PULSE = 5
     const val TIMEOUT_TIME = 10
+
+    const val TCP_PORT = 3336
+    const val UDP_PORT = 3340
 }

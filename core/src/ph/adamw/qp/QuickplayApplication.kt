@@ -44,7 +44,7 @@ class QuickplayApplication : ApplicationAdapter() {
         camera.update()
 
         //DEBUG
-        ClientEndpoint.attemptConnect("0.0.0.0", 3336)
+        ClientEndpoint.connect("localhost", GameConstants.TCP_PORT)
 
         /*
         val game = PongGame()

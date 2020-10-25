@@ -7,50 +7,40 @@ import kotlinx.coroutines.launch
 import mu.KotlinLogging
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.packet.PacketType
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.lang.Exception
+import java.net.DatagramSocket
 import java.net.InetSocketAddress
 import java.net.Socket
 
 object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
     var pid : Long = -2L
-    private val logger = KotlinLogging.logger {}
-    private var socket = Socket()
 
-    override lateinit var outputStream: OutputStream
-    override lateinit var inputStream: InputStream
+    override var tcpSocket = Socket()
 
     private lateinit var heartbeat : Job
 
-    fun connect(hostname: String?, port: Int) {
+    fun connect(hostname: String, port: Int) : Boolean {
         if (isConnected()) {
             disconnectAndAlertServer()
         }
 
-        socket.connect(InetSocketAddress(hostname, port), GameConstants.TIMEOUT_TIME * 1000)
-        outputStream = socket.getOutputStream()
-        outputStream.flush()
-        inputStream = socket.getInputStream()
-
-        startHeartBeat()
-        startReceiving()
-    }
-
-    fun disconnectAndAlertServer() {
-        send(PacketType.DISCONNECT_REQUEST)
-        disconnect()
-    }
-
-    fun attemptConnect(host: String?, port: Int): Boolean {
         try {
-            connect(host, port)
-        } catch (e: IOException) {
+            tcpSocket.connect(InetSocketAddress(hostname, port), GameConstants.TIMEOUT_TIME * 1000)
+        } catch(e: Exception) {
             logger.trace(e.localizedMessage, e.cause)
             return false
         }
 
+        tcpSocket.outputStream.flush()
+
+        startHeartBeat()
+        startReceivingTcp()
         return true
+    }
+
+    fun disconnectAndAlertServer() {
+        sendTcp(PacketType.DISCONNECT_REQUEST)
+        disconnect()
     }
 
     private fun disconnect() {
@@ -58,12 +48,8 @@ object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
             heartbeat.cancel()
         }
 
-        try {
-            socket.close()
-            socket = Socket()
-        } catch (e: IOException) {
-            logger.trace(e.localizedMessage, e.cause)
-        }
+        tcpSocket.close()
+        tcpSocket = Socket()
     }
 
     override fun isConnected(): Boolean {
@@ -72,7 +58,7 @@ object ClientEndpoint : Endpoint(QuickplayApplication.localManager) {
 
     private fun startHeartBeat() {
         heartbeat = GlobalScope.launch {
-            while(send(PacketType.HEARTBEAT)) {
+            while(sendTcp(PacketType.HEARTBEAT)) {
                 delay(GameConstants.HEARTBEAT_PULSE * 1000L)
             }
         }
