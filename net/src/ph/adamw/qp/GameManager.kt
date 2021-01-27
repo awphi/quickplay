@@ -1,6 +1,7 @@
 package ph.adamw.qp
 
 import com.badlogic.ashley.core.Engine
+import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.World
@@ -14,6 +15,7 @@ import ph.adamw.qp.game.system.InputHandlerSystem
 import ph.adamw.qp.packet.PacketRegistry
 
 class GameManager {
+    private val entityIDProvider = EntityIDProvider()
     private val logger = KotlinLogging.logger {}
     private lateinit var game: AbstractGame
     var time : Float = 0f
@@ -31,10 +33,9 @@ class GameManager {
     init {
         logger.info("Started new game manager!")
         packetRegistry.build()
-        engine.addEntityListener(EntityIDProvider())
+        engine.addEntityListener(entityIDProvider)
         engine.addEntityListener(EntityBodyProvider(world))
         engine.addSystem(InputHandlerSystem(this))
-        // TODO input HANDLING system that iterates over all player components & uses game's input map
     }
 
     fun setInput(pid: Long, input: InputSnapshot) {
@@ -47,6 +48,10 @@ class GameManager {
 
     fun getGame() : AbstractGame {
         return this.game
+    }
+
+    fun getEntity(id: Long) : Entity? {
+        return entityIDProvider.get(id)
     }
 
     fun isGameReady() : Boolean {

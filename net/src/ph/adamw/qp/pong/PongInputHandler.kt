@@ -2,7 +2,7 @@ package ph.adamw.qp.pong
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Input
-import ph.adamw.qp.game.component.Mappers
+import ph.adamw.qp.game.component.util.Mappers
 import ph.adamw.qp.game.component.PhysicsComponent
 import ph.adamw.qp.game.input.InputHandler
 import ph.adamw.qp.game.input.InputSnapshot

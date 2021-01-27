@@ -10,7 +10,8 @@ import java.io.Serializable
 class EntityTypeAdapter : TypeAdapter<Entity>() {
     override fun write(w: JsonWriter, value: Entity) {
         w.beginArray()
-        for(i in value.components) {
+        for(idx in 0 until value.components.size()) {
+            val i = value.components[idx]
             if(i !is Serializable) {
                 continue
             }

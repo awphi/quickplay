@@ -1,26 +1,19 @@
 package ph.adamw.qp
 
-import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.sun.security.ntlm.Client
 import mu.KotlinLogging
-import ph.adamw.qp.game.AbstractGame
 import ph.adamw.qp.game.listener.EntityDrawableProvider
 import ph.adamw.qp.game.GameConstants
-import ph.adamw.qp.game.input.InputHandler
 import ph.adamw.qp.game.input.InputSnapshot
 import ph.adamw.qp.game.system.DrawSystem
 import ph.adamw.qp.game.system.InputSampleSystem
-import ph.adamw.qp.io.JsonUtils
-import ph.adamw.qp.pong.PongGame
 
 
 class QuickplayApplication : ApplicationAdapter() {
@@ -48,7 +41,7 @@ class QuickplayApplication : ApplicationAdapter() {
         camera.update()
 
         //DEBUG
-        ClientEndpoint.connect("localhost", GameConstants.TCP_PORT)
+        ClientEndpoint.connect("localhost", GameConstants.DEFAULT_PORT)
         logger.info("Assigned local port: ${ClientEndpoint.tcpSocket.localPort}")
 
         /*

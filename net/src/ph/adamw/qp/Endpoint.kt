@@ -8,10 +8,7 @@ import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.packet.PacketType
 import ph.adamw.qp.io.JsonUtils
 import java.io.*
-import java.net.DatagramPacket
-import java.net.DatagramSocket
-import java.net.Socket
-import java.net.SocketException
+import java.net.*
 
 abstract class Endpoint(private val manager: GameManager) {
     protected val logger = KotlinLogging.logger {}
@@ -26,7 +23,9 @@ abstract class Endpoint(private val manager: GameManager) {
             val buf = ByteArray(65535)
             while (isConnected()) {
                 val receive = DatagramPacket(buf, buf.size)
-                udpSocket.receive(receive)
+                try {
+                    udpSocket.receive(receive)
+                } catch(ignored: SocketException) {}
                 val s = String(receive.data, 0, receive.length, Charsets.UTF_8)
                 for(i in s.split("\n")) {
                     handlePacket(i)

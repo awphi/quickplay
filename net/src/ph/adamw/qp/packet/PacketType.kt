@@ -5,7 +5,8 @@ enum class PacketType {
     HEARTBEAT,
     PID_ASSIGN,
     DISCONNECT_REQUEST,
-    INPUT_SAMPLE;
+    INPUT_SAMPLE,
+    ENTITY_UPDATE;
 
     fun getId(): Int {
         return ordinal

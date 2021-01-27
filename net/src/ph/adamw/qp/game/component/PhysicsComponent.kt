@@ -1,13 +1,16 @@
 package ph.adamw.qp.game.component
 
 import com.badlogic.ashley.core.Component
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.World
+import ph.adamw.qp.game.component.util.BodyData
+import ph.adamw.qp.game.component.util.UpdatableComponent
 import java.io.Serializable
 
-class PhysicsComponent(private val bodyDef: BodyDef) : Component, Serializable {
+class PhysicsComponent(private val bodyDef: BodyDef) : Component, UpdatableComponent, Serializable {
     @Transient
     lateinit var world: World
 
@@ -27,17 +30,23 @@ class PhysicsComponent(private val bodyDef: BodyDef) : Component, Serializable {
 
         // Load body data state into active body
         if(::bodyData.isInitialized) {
-            body.setTransform(bodyData.position, bodyData.angle)
-            body.linearVelocity = bodyData.linearVelocity
-            body.angularVelocity = bodyData.angularVelocity
-            body.angularDamping = bodyData.angularDamping
-            body.massData = bodyData.massData
-            body.isBullet = bodyData.bullet
-            body.angularDamping = bodyData.angularDamping
-            body.isSleepingAllowed = bodyData.sleepingAllowed
-            body.isAwake = bodyData.awake
-            body.gravityScale = bodyData.gravityScale
+            copyBodyDataFrom(bodyData)
         }
+    }
+
+    private fun copyBodyDataFrom(bd: BodyData) {
+        // TODO fix the fact that if the world becomes locked during this execution we will crash
+        // --> maybe sync it into the game thread
+        body.setTransform(bd.position, bd.angle)
+        body.linearVelocity = bd.linearVelocity
+        body.angularVelocity = bd.angularVelocity
+        body.angularDamping = bd.angularDamping
+        body.massData = bd.massData
+        body.isBullet = bd.bullet
+        body.angularDamping = bd.angularDamping
+        body.isSleepingAllowed = bd.sleepingAllowed
+        body.isAwake = bd.awake
+        body.gravityScale = bd.gravityScale
     }
 
     fun removeBody() {
@@ -55,20 +64,30 @@ class PhysicsComponent(private val bodyDef: BodyDef) : Component, Serializable {
 
     // Save body state into a body data object
     fun createBodyData() {
-        if(!isReady()) {
+        if (!isReady()) {
             return
         }
 
         bodyData = BodyData(body.position,
-            body.linearVelocity,
-            body.angularVelocity,
-            body.angle,
-            body.massData,
-            body.isBullet,
-            body.angularDamping,
-            body.isSleepingAllowed,
-            body.isAwake,
-            body.gravityScale
+                body.linearVelocity,
+                body.angularVelocity,
+                body.angle,
+                body.massData,
+                body.isBullet,
+                body.angularDamping,
+                body.isSleepingAllowed,
+                body.isAwake,
+                body.gravityScale
         )
+    }
+
+    override fun update(new: Component) {
+        val p = new as PhysicsComponent
+
+        Gdx.app.postRunnable {
+            if(p::bodyData.isInitialized && !world.isLocked) {
+                copyBodyDataFrom(p.bodyData)
+            }
+        }
     }
 }

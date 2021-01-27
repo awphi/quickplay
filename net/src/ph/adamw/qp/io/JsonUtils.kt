@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.*
 import com.google.gson.*
 import ph.adamw.qp.game.AbstractGame
 import ph.adamw.qp.pong.PongGame
-import ph.adamw.qp.game.component.*
+import ph.adamw.qp.game.component.util.ComponentRegistry
 import ph.adamw.qp.game.input.InputHandler
 import ph.adamw.qp.pong.PongInputHandler
 

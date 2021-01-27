@@ -3,7 +3,7 @@ package ph.adamw.qp.game.listener
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
 import com.badlogic.gdx.physics.box2d.World
-import ph.adamw.qp.game.component.Mappers
+import ph.adamw.qp.game.component.util.Mappers
 import ph.adamw.qp.game.component.PhysicsComponent
 
 class EntityBodyProvider(private val world: World) : EntityListener {

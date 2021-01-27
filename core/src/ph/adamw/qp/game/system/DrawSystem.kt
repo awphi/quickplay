@@ -1,13 +1,12 @@
 package ph.adamw.qp.game.system
 
-import com.badlogic.ashley.core.ComponentMapper
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.game.component.DrawableComponent
-import ph.adamw.qp.game.component.Mappers
+import ph.adamw.qp.game.component.util.Mappers
 import ph.adamw.qp.game.component.PhysicsComponent
 
 

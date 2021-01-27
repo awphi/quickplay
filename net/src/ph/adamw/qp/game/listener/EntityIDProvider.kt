@@ -3,7 +3,7 @@ package ph.adamw.qp.game.listener
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
 import ph.adamw.qp.game.component.IDComponent
-import ph.adamw.qp.game.component.Mappers
+import ph.adamw.qp.game.component.util.Mappers
 
 class EntityIDProvider : EntityListener {
     private val map = HashMap<Long, Entity>()
@@ -16,6 +16,10 @@ class EntityIDProvider : EntityListener {
         } while(map.containsKey(nextId))
 
         return nextId
+    }
+
+    fun get(id: Long) : Entity? {
+        return map[id]
     }
 
     override fun entityAdded(entity: Entity) {

@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.*
 import ph.adamw.qp.game.AbstractGame
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.game.component.*
+import ph.adamw.qp.game.component.util.Mappers
 
 
 class PongGame : AbstractGame() {

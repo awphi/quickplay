@@ -1,5 +1,6 @@
 package ph.adamw.qp
 
+import com.badlogic.ashley.utils.ImmutableArray
 import mu.KotlinLogging
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.packet.PacketType
@@ -42,6 +43,10 @@ class GameServer {
 
     fun getConnected() : Int {
         return map.values.size
+    }
+
+    fun getConnections() : Set<Long> {
+        return map.keys;
     }
 
     private fun getFreshPid() : Long {

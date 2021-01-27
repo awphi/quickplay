@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IntervalIteratingSystem
 import ph.adamw.qp.GameManager
 import ph.adamw.qp.game.GameConstants
-import ph.adamw.qp.game.component.Mappers
+import ph.adamw.qp.game.component.util.Mappers
 import ph.adamw.qp.game.component.PlayerComponent
 
 class InputHandlerSystem(val manager: GameManager) : IntervalIteratingSystem(Family.all(PlayerComponent::class.java).get(), GameConstants.TICK_STEP, -1) {
