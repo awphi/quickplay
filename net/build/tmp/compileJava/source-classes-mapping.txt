@@ -1,0 +1,3 @@
+ph/adamw/qp/io/RuntimeTypeAdapterFactory.java
+ ph.adamw.qp.io.RuntimeTypeAdapterFactory
+ ph.adamw.qp.io.RuntimeTypeAdapterFactory$1

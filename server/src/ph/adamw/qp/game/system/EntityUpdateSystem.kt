@@ -27,7 +27,8 @@ class EntityUpdateSystem(private val server: GameServer) : IntervalIteratingSyst
 
     override fun processEntity(entity: Entity) {
         for(i : Long in server.getConnections()) {
-            // TODO modify to check if this given user needs this given entity updating, if so add it to their buffer
+            // TODO:
+            //  check if this given user needs this given entity updating, if not don't add to buffer
             addToBuffer(i, entity)
         }
     }

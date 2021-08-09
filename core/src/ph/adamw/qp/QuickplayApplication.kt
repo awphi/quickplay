@@ -41,6 +41,7 @@ class QuickplayApplication : ApplicationAdapter() {
         camera.update()
 
         //DEBUG
+        ClientEndpoint.fakeLag = 50f
         ClientEndpoint.connect("localhost", GameConstants.DEFAULT_PORT)
         logger.info("Assigned local port: ${ClientEndpoint.tcpSocket.localPort}")
 

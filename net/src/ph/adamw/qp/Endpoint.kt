@@ -1,12 +1,14 @@
 package ph.adamw.qp
 
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.delay
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
-import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.packet.PacketType
 import ph.adamw.qp.io.JsonUtils
+import ph.adamw.qp.packet.PacketHandler
 import java.io.*
 import java.net.*
 
@@ -15,6 +17,8 @@ abstract class Endpoint(private val manager: GameManager) {
 
     protected abstract val tcpSocket : Socket
     protected abstract val udpSocket : DatagramSocket
+
+    var fakeLag : Float = 0f
 
     protected abstract fun isConnected(): Boolean
 
@@ -134,7 +138,14 @@ abstract class Endpoint(private val manager: GameManager) {
         val pkt = PacketType.getPacket(idAsInt) ?: return
         val handler = manager.packetRegistry.getHandler(pkt) ?: return
         val data = obj.get("data")
-        logger.debug("Handling: $pkt: $data")
-        handler.handle(data, this)
+
+        val endpoint = this;
+        runBlocking {
+            if(fakeLag > 0f) {
+                delay(fakeLag)
+            }
+            handler.handle(data, endpoint)
+            logger.debug("Handling: $pkt: $data")
+        }
     }
 }
