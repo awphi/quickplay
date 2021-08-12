@@ -25,7 +25,5 @@ object PongInputHandler : InputHandler {
         if(b.isReady()) {
             b.body.setLinearVelocity(0f, v)
         }
-
-        //TODO DEBUG println(b.body.position)
     }
 }

@@ -1,14 +1,11 @@
 package ph.adamw.qp
 
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.delay
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
-import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import ph.adamw.qp.packet.PacketType
 import ph.adamw.qp.io.JsonUtils
-import ph.adamw.qp.packet.PacketHandler
 import java.io.*
 import java.net.*
 
@@ -17,8 +14,6 @@ abstract class Endpoint(private val manager: GameManager) {
 
     protected abstract val tcpSocket : Socket
     protected abstract val udpSocket : DatagramSocket
-
-    var fakeLag : Float = 0f
 
     protected abstract fun isConnected(): Boolean
 
@@ -44,7 +39,7 @@ abstract class Endpoint(private val manager: GameManager) {
         }
 
         val bytes = wrapPacket(type, content).toByteArray(Charsets.UTF_8)
-        logger.debug("Dispatching UDP: $type: $content")
+        //logger.debug("Dispatching UDP: $type: $content")
 
         val dp = DatagramPacket(bytes, 0, bytes.size)
 
@@ -81,7 +76,7 @@ abstract class Endpoint(private val manager: GameManager) {
         }
 
         val pkt = wrapPacket(type, content)
-        logger.debug("Dispatching TCP: $type: $content")
+        //logger.debug("Dispatching TCP: $type: $content")
 
         try {
             tcpSocket.outputStream.write(pkt.toByteArray(Charsets.UTF_8))
@@ -115,6 +110,7 @@ abstract class Endpoint(private val manager: GameManager) {
             JsonUtils.parseJson(content)
         } catch (e: JsonSyntaxException) {
             logger.trace(e.localizedMessage, e.cause)
+            logger.trace(content)
             return
         }
 
@@ -139,13 +135,7 @@ abstract class Endpoint(private val manager: GameManager) {
         val handler = manager.packetRegistry.getHandler(pkt) ?: return
         val data = obj.get("data")
 
-        val endpoint = this;
-        runBlocking {
-            if(fakeLag > 0f) {
-                delay(fakeLag)
-            }
-            handler.handle(data, endpoint)
-            logger.debug("Handling: $pkt: $data")
-        }
+        handler.handle(data, this)
+        //logger.debug("Handling: $pkt: $data")
     }
 }

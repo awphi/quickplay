@@ -41,17 +41,8 @@ class QuickplayApplication : ApplicationAdapter() {
         camera.update()
 
         //DEBUG
-        ClientEndpoint.fakeLag = 50f
         ClientEndpoint.connect("localhost", GameConstants.DEFAULT_PORT)
         logger.info("Assigned local port: ${ClientEndpoint.tcpSocket.localPort}")
-
-        /*
-        val game = PongGame()
-        val json = JsonUtils.toJsonTree(game)
-        println(json)
-        val rebuiltGame = JsonUtils.fromJson(json, AbstractGame::class.java)
-        localManager.init(rebuiltGame)
-         */
     }
 
     override fun render() {

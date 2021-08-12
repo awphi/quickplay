@@ -7,6 +7,7 @@ import ph.adamw.qp.game.component.DrawableComponent
 import ph.adamw.qp.game.component.util.Mappers
 import ph.adamw.qp.game.component.NameComponent
 
+// TODO modify to change/remove the drawable component of entity echos
 class EntityDrawableProvider : EntityListener {
     private val nameMapper = Mappers.get(NameComponent::class.java)
 
