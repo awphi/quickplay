@@ -2,6 +2,7 @@ package ph.adamw.qp.game.component
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
@@ -9,6 +10,8 @@ import com.badlogic.gdx.physics.box2d.World
 import ph.adamw.qp.game.component.util.BodyData
 import ph.adamw.qp.game.component.util.UpdatableComponent
 import java.io.Serializable
+import kotlin.math.floor
+import kotlin.math.round
 
 class PhysicsComponent(private val bodyDef: BodyDef) : Component, UpdatableComponent, Serializable {
     @Transient
@@ -45,7 +48,6 @@ class PhysicsComponent(private val bodyDef: BodyDef) : Component, UpdatableCompo
         body.isBullet = bd.bullet
         body.angularDamping = bd.angularDamping
         body.isSleepingAllowed = bd.sleepingAllowed
-        body.isAwake = bd.awake
         body.gravityScale = bd.gravityScale
     }
 
@@ -68,16 +70,16 @@ class PhysicsComponent(private val bodyDef: BodyDef) : Component, UpdatableCompo
             return
         }
 
-        bodyData = BodyData(body.position,
-                body.linearVelocity,
-                body.angularVelocity,
-                body.angle,
-                body.massData,
-                body.isBullet,
-                body.angularDamping,
-                body.isSleepingAllowed,
-                body.isAwake,
-                body.gravityScale
+        bodyData = BodyData(
+            Vector2(round(body.position.x), round(body.position.y)),
+            body.linearVelocity,
+            body.angularVelocity,
+            body.angle,
+            body.massData,
+            body.isBullet,
+            body.angularDamping,
+            body.isSleepingAllowed,
+            body.gravityScale
         )
     }
 

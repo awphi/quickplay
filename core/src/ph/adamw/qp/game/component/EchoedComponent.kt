@@ -2,10 +2,8 @@ package ph.adamw.qp.game.component
 
 import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Entity
-import mu.KotlinLogging
 import ph.adamw.qp.QuickplayApplication
-import ph.adamw.qp.game.EntityUtils
-import ph.adamw.qp.game.component.util.Mappers
+import ph.adamw.qp.game.entity.EntityUtils
 
 class EchoedComponent(val echo: Entity) : Component {
     companion object {

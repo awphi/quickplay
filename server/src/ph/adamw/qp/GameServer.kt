@@ -7,6 +7,7 @@ import ph.adamw.qp.packet.PacketType
 import java.net.DatagramSocket
 import java.net.ServerSocket
 import java.net.Socket
+import java.net.SocketException
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -20,8 +21,12 @@ class GameServer {
         Thread({
             while (!socket.isClosed) {
                 if (manager.getGame().maxPlayers > getConnected()) {
-                    val conn = socket.accept()
-                    add(conn)
+                    try {
+                        val conn = socket.accept()
+                        add(conn)
+                    } catch (e: SocketException) {
+                        logger.error { "Failed to connect to new client: ${e.localizedMessage}" }
+                    }
                 }
             }
         }, "ConnAccept").start()
@@ -82,6 +87,7 @@ class GameServer {
         }
 
         logger.info("Received connection from: ${conn.inetAddress}, assigned ID: $clientId")
+
         val client = ServerEndpoint(clientId, this, conn)
         map[clientId] = client
         client.restartKillJob()

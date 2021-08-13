@@ -67,6 +67,6 @@ class QuickplayApplication : ApplicationAdapter() {
     }
 
     companion object {
-        val localManager = GameManager()
+        val localManager = ClientGameManager()
     }
 }

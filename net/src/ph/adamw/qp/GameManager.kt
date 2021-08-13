@@ -13,12 +13,12 @@ import ph.adamw.qp.game.system.Box2DSystem
 import ph.adamw.qp.game.system.InputHandlerSystem
 import ph.adamw.qp.packet.PacketRegistry
 
-class GameManager {
-    private val entityIDProvider = EntityIDProvider()
-    private val logger = KotlinLogging.logger {}
+open class GameManager {
+    protected val entityIDProvider = EntityIDProvider()
+    protected val logger = KotlinLogging.logger {}
     private lateinit var game: AbstractGame
     var time : Float = 0f
-        private set
+        protected set
 
     val engine = Engine()
     val world = World(Vector2(0f, -10f), true)
@@ -70,5 +70,9 @@ class GameManager {
     fun tick(delta: Float) {
         engine.update(delta)
         time += delta
+    }
+
+    open fun onEntityInputHandled(input: InputSnapshot, entity: Entity) {
+
     }
 }

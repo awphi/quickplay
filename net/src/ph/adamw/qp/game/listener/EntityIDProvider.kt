@@ -2,6 +2,7 @@ package ph.adamw.qp.game.listener
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
+import mu.KotlinLogging
 import ph.adamw.qp.game.component.IDComponent
 import ph.adamw.qp.game.component.util.Mappers
 
@@ -9,6 +10,8 @@ class EntityIDProvider : EntityListener {
     private val map = HashMap<Long, Entity>()
     private val mapper = Mappers.get(IDComponent::class.java)
     private var nextId = 0L
+
+    private val logger = KotlinLogging.logger {}
 
     private fun nextId() : Long {
         do {

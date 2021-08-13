@@ -11,5 +11,4 @@ class BodyData(val position: Vector2,
                val bullet: Boolean,
                val angularDamping: Float,
                val sleepingAllowed : Boolean,
-               val awake: Boolean,
                val gravityScale : Float)
