@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.World
 import ph.adamw.qp.game.component.util.BodyData
 import ph.adamw.qp.game.component.util.UpdatableComponent
 import java.io.Serializable
-import kotlin.math.floor
 import kotlin.math.round
 
 class PhysicsComponent(private val bodyDef: BodyDef) : Component, UpdatableComponent, Serializable {

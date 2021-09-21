@@ -37,9 +37,9 @@ class EntityUpdateHandler : PacketHandler() {
 
             val pesc = QuickplayApplication.localManager.getPlayerEntitySnapshotCache(id)
             val snap = JsonUtils.toJsonTree(entity);
-            if(pesc != null && !pesc.contains2(snap)) {
+            if(pesc != null && !pesc.contains(snap, true)) {
                 EntityUtils.copyEntityInto(entity, localEntity, false)
-                //pesc.add(snap)
+                pesc.add(snap)
             }
 
         } else {

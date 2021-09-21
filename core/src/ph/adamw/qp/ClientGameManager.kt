@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity
 import com.google.gson.JsonElement
 import ph.adamw.qp.game.GameConstants
 import ph.adamw.qp.game.component.IDComponent
-import ph.adamw.qp.game.component.PlayerComponent
 import ph.adamw.qp.game.component.util.Mappers
 import ph.adamw.qp.game.input.InputSnapshot
 import ph.adamw.qp.io.JsonUtils

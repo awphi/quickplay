@@ -1,14 +1,9 @@
 package ph.adamw.qp
 
 import com.badlogic.gdx.utils.Queue
-import com.google.common.collect.MapDifference
-import com.google.common.collect.Maps
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
-import com.google.gson.reflect.TypeToken
 import mu.KotlinLogging
-import ph.adamw.qp.io.JsonUtils
-import java.lang.reflect.Type
 
 class PlayerEntitySnapshotCache(private val size: Int) {
     private val queue = Queue<JsonElement>(size)
@@ -24,36 +19,39 @@ class PlayerEntitySnapshotCache(private val size: Int) {
         }
     }
 
-    fun contains(snap: JsonElement) : Boolean {
-        return queue.indexOf(snap, false) != -1
-    }
-
-    fun contains2(snap: JsonElement) : Boolean {
+    fun contains(snap: JsonElement, loose: Boolean) : Boolean {
         val it = queue.iterator()
-        val diffs = HashSet<MapDifference<String, Any>>()
-        while(it.hasNext()) {
-            val snapArr = snap as JsonArray
-            val cached = it.next() as JsonArray
-            var c = 0
-            for (i in 0 until snapArr.size()) {
-                val mapType: Type = object : TypeToken<Map<String?, Any?>?>() {}.type
-                val oCached = cached.get(i)
-                val oSnap = snapArr.get(i)
-                val firstMap: Map<String, Any> = JsonUtils.gson.fromJson(oCached, mapType)
-                val secondMap: Map<String, Any> = JsonUtils.gson.fromJson(oSnap, mapType)
-                val d = Maps.difference(firstMap, secondMap)
+        val snapArr = snap as JsonArray
+        val sn = snapArr.size()
 
-                // TODO change this areEqual to use some method that accounts for a margin of error for different props
-                //  i.e. bodyData.position.x and bodyData.position.y can be +- ~0.1
-                //  then replace the rounding in createBodyData
-                if(d.areEqual()) {
+        while(it.hasNext()) {
+            val cached = it.next()
+
+            // First check with strict equality
+            if(cached.equals(snap)) {
+                return true
+            }
+
+            val cachedArr = cached as JsonArray
+
+            // Mismatching number of components
+            if(sn != cachedArr.size()) {
+                continue
+            }
+
+            var c = 0
+            for (i in 0 until sn) {
+                val cacheJson = cachedArr.get(i).asJsonObject
+                val snapJson = snapArr.get(i).asJsonObject
+
+                if(ComponentComparator.compare(cacheJson, snapJson, loose)) {
                     c += 1
                 } else {
-                    diffs.add(d)
+                    break
                 }
             }
 
-            if(c == snapArr.size()) {
+            if(c == sn) {
                 return true
             }
         }
